@@ -69,6 +69,7 @@ static void	end_phase(t_philo *philo)
 		philo->id);
 	pthread_mutex_lock(philo->meal_mutex);
 	philo->last_meal = get_current_time();
+	philo->times_eaten++;
 	pthread_mutex_unlock(philo->meal_mutex);
 	ft_sleep(philo->conf->time_to_eat);
 	take_or_leave_fork(philo, 0);
@@ -81,27 +82,15 @@ static void	end_phase(t_philo *philo)
 
 void	*looper(t_philo *philo)
 {
-	int	dead;
-
 	while (1)
 	{
-		pthread_mutex_lock(&philo->conf->death_mutex);
-		dead = philo->conf->died;
-		pthread_mutex_unlock(&philo->conf->death_mutex);
-		if (dead)
-		{
+		if (check_death(philo))
 			return (NULL);
-		}
 		printf("%ld %d is thinking\n", get_current_time() - philo->start_time,
 			philo->id);
 		ft_sleep(1);
-		pthread_mutex_lock(&philo->conf->death_mutex);
-		dead = philo->conf->died;
-		if (dead)
-		{
+		if (check_death(philo))
 			return (NULL);
-		}
-		pthread_mutex_unlock(&philo->conf->death_mutex);
 		end_phase(philo);
 	}
 }
@@ -118,8 +107,6 @@ void	*philo_routine(void *arg)
 		printf("%ld %d has taken a fork\n", get_current_time()
 			- philo->start_time, philo->id);
 		ft_sleep(philo->conf->time_to_die);
-		printf("%ld %d died\n", get_current_time() - philo->start_time,
-			philo->id);
 		pthread_mutex_lock(&philo->conf->death_mutex);
 		philo->conf->died = 1;
 		pthread_mutex_unlock(&philo->conf->death_mutex);
