@@ -79,30 +79,10 @@ static void	end_phase(t_philo *philo)
 	ft_sleep(philo->conf->time_to_sleep);
 }
 
-void	*philo_routine(void *arg)
+void	*looper(t_philo *philo)
 {
-	t_philo	*philo;
-	int		dead;
+	int	dead;
 
-	philo = (t_philo *)arg;
-	if (check_death(philo))
-		return (NULL);
-	if (philo->conf->num_philos == 1)
-	{
-		printf("%ld %d has taken a fork\n", get_current_time()
-			- philo->start_time, philo->id);
-		ft_sleep(philo->conf->time_to_die);
-		printf("%ld %d died\n", get_current_time() - philo->start_time,
-			philo->id);
-		pthread_mutex_lock(&philo->conf->death_mutex);
-		philo->conf->died = 1;
-		pthread_mutex_unlock(&philo->conf->death_mutex);
-		return (NULL);
-	}
-	if (philo->id % 2 == 0)
-	{
-		ft_sleep(philo->conf->time_to_eat / 2);
-	}
 	while (1)
 	{
 		pthread_mutex_lock(&philo->conf->death_mutex);
@@ -124,5 +104,29 @@ void	*philo_routine(void *arg)
 		pthread_mutex_unlock(&philo->conf->death_mutex);
 		end_phase(philo);
 	}
+}
+
+void	*philo_routine(void *arg)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
+	if (check_death(philo))
+		return (NULL);
+	if (philo->conf->num_philos == 1)
+	{
+		printf("%ld %d has taken a fork\n", get_current_time()
+			- philo->start_time, philo->id);
+		ft_sleep(philo->conf->time_to_die);
+		printf("%ld %d died\n", get_current_time() - philo->start_time,
+			philo->id);
+		pthread_mutex_lock(&philo->conf->death_mutex);
+		philo->conf->died = 1;
+		pthread_mutex_unlock(&philo->conf->death_mutex);
+		return (NULL);
+	}
+	if (philo->id % 2 == 0)
+		ft_sleep(philo->conf->time_to_eat / 2);
+	return (looper(philo));
 	return (NULL);
 }

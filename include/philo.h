@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: daflynn <daflynn@student.42berlin.de>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/07 17:00:33 by daflynn           #+#    #+#             */
-/*   Updated: 2025/10/07 17:02:02 by daflynn          ###   ########.fr       */
+/*   Created: 2025/10/09 13:49:54 by daflynn           #+#    #+#             */
+/*   Updated: 2025/10/09 13:49:59 by daflynn          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,5 @@ void				ft_init_conf(t_config *conf, int argc, char **argv);
 long				get_current_time(void);
 void				ft_sleep(long milliseconds);
 void				*monitor_routine(void *arg);
-void				*monitor_routine(void *arg);
+
 #endif

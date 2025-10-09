@@ -57,8 +57,7 @@ void	*monitor_routine(void *arg)
 				printf("%ld %d died\n", current_time
 					- conf->philos[i].start_time, conf->philos[i].id);
 				(pthread_mutex_lock(&conf->death_mutex), conf->died = 1);
-				pthread_mutex_unlock(&conf->death_mutex);
-				return (NULL);
+				return (pthread_mutex_unlock(&conf->death_mutex), NULL);
 			}
 			pthread_mutex_unlock(conf->philos[i].meal_mutex);
 		}
