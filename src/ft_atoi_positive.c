@@ -12,6 +12,17 @@
 
 #include "philo.h"
 
+void	ft_print(t_philo *philo, char *message)
+{
+	long	timestamp;
+
+	timestamp = get_current_time() - philo->start_time;
+	pthread_mutex_lock(&philo->conf->print_mutex);
+	if (!check_death(philo))
+		printf("%ld %d %s\n", timestamp, philo->id, message);
+	pthread_mutex_unlock(&philo->conf->print_mutex);
+}
+
 int	ft_atoi_positive(char *str)
 {
 	int	result;

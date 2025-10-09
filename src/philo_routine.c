@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-static int	check_death(t_philo *philo)
+int	check_death(t_philo *philo)
 {
 	int	dead;
 
@@ -61,12 +61,7 @@ static void	end_phase(t_philo *philo)
 		take_or_leave_fork(philo, 0);
 		return ;
 	}
-	printf("%ld %d has taken a fork\n", get_current_time() - philo->start_time,
-		philo->id);
-	printf("%ld %d has taken a fork\n", get_current_time() - philo->start_time,
-		philo->id);
-	printf("%ld %d is eating\n", get_current_time() - philo->start_time,
-		philo->id);
+	(ft_print_fork(philo), ft_print_fork(philo), ft_print_eat(philo));
 	pthread_mutex_lock(philo->meal_mutex);
 	philo->last_meal = get_current_time();
 	philo->times_eaten++;
@@ -75,8 +70,7 @@ static void	end_phase(t_philo *philo)
 	take_or_leave_fork(philo, 0);
 	if (check_death(philo))
 		return ;
-	printf("%ld %d is sleeping\n", get_current_time() - philo->start_time,
-		philo->id);
+	ft_print_sleep(philo);
 	ft_sleep(philo->conf->time_to_sleep);
 }
 
@@ -86,8 +80,7 @@ void	*looper(t_philo *philo)
 	{
 		if (check_death(philo))
 			return (NULL);
-		printf("%ld %d is thinking\n", get_current_time() - philo->start_time,
-			philo->id);
+		ft_print_think(philo);
 		ft_sleep(1);
 		if (check_death(philo))
 			return (NULL);
@@ -104,8 +97,7 @@ void	*philo_routine(void *arg)
 		return (NULL);
 	if (philo->conf->num_philos == 1)
 	{
-		printf("%ld %d has taken a fork\n", get_current_time()
-			- philo->start_time, philo->id);
+		ft_print_fork(philo);
 		ft_sleep(philo->conf->time_to_die);
 		pthread_mutex_lock(&philo->conf->death_mutex);
 		philo->conf->died = 1;

@@ -44,6 +44,7 @@ typedef struct s_config
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*meal_mutexes;
+	pthread_mutex_t	print_mutex;
 	pthread_t		*threads;
 	pthread_t		monitor_thread;
 	t_philo			*philos;
@@ -55,5 +56,12 @@ void				ft_init_conf(t_config *conf, int argc, char **argv);
 long				get_current_time(void);
 void				ft_sleep(long milliseconds);
 void				*monitor_routine(void *arg);
+void				ft_print(t_philo *philo, char *message);
+int					check_death(t_philo *philo);
+void				ft_print_think(t_philo *philo);
+void				ft_print_eat(t_philo *philo);
+void				ft_print_sleep(t_philo *philo);
+void				ft_print_fork(t_philo *philo);
+void				ft_print_die(t_philo *philo);
 
 #endif

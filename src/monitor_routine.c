@@ -54,8 +54,7 @@ void	*monitor_routine(void *arg)
 			if (current_time - conf->philos[i].last_meal > conf->time_to_die)
 			{
 				pthread_mutex_unlock(conf->philos[i].meal_mutex);
-				printf("%ld %d died\n", current_time
-					- conf->philos[i].start_time, conf->philos[i].id);
+				ft_print_die(&conf->philos[i]);
 				(pthread_mutex_lock(&conf->death_mutex), conf->died = 1);
 				return (pthread_mutex_unlock(&conf->death_mutex), NULL);
 			}
