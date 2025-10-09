@@ -29,6 +29,7 @@ typedef struct s_philo
 	int				time_to_eat;
 	long			start_time;
 	long			last_meal;
+	int				times_eaten;
 	struct s_config	*conf;
 }					t_philo;
 

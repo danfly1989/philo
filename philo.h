@@ -37,7 +37,7 @@ typedef struct s_data
 }	t_data;
 
 int	ft_atoi_positive(char *str);
-int	init_data(t_data *data, ubt argc, char **argv);
+int	init_data(t_data *data, innargc, char **argv);
 void	cleanup_data(t_data *data);
 
 #endif

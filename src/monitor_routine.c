@@ -12,6 +12,26 @@
 
 #include "philo.h"
 
+static int	all_philos_satisfied(t_config *conf)
+{
+	int	satisfied_count;
+	int	i;
+
+	if (conf->times_must_eat == -1)
+		return (0);
+	satisfied_count = 0;
+	i = 0;
+	while (i < conf->num_philos)
+	{
+		pthread_mutex_lock(conf->philos[i].meal_mutex);
+		if (conf->philos[i].times_eaten >= conf->times_must_eat)
+			satisfied_count++;
+		pthread_mutex_unlock(conf->philos[i].meal_mutex);
+		i++;
+	}
+	return (satisfied_count == conf->num_philos);
+}
+
 void	*monitor_routine(void *arg)
 {
 	t_config	*conf;
@@ -21,6 +41,11 @@ void	*monitor_routine(void *arg)
 	conf = (t_config *)arg;
 	while (1)
 	{
+		if (all_philos_satisfied(conf))
+		{
+			(pthread_mutex_lock(&conf->death_mutex), conf->died = 1);
+			return (pthread_mutex_unlock(&conf->death_mutex), NULL);
+		}
 		i = -1;
 		while (++i < conf->num_philos)
 		{
