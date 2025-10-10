@@ -34,5 +34,10 @@ void	ft_print_fork(t_philo *philo)
 
 void	ft_print_die(t_philo *philo)
 {
-	ft_print(philo, "died");
+	long	timestamp;
+
+	timestamp = get_current_time() - philo->start_time;
+	pthread_mutex_lock(&philo->conf->print_mutex);
+	printf("%ld %d died\n", timestamp, philo->id);
+	pthread_mutex_unlock(&philo->conf->print_mutex);
 }

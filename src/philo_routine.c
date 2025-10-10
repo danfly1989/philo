@@ -53,6 +53,8 @@ because it was easily done with a pointer to the philo struct
 to appease Norminette*/
 static void	end_phase(t_philo *philo)
 {
+	int	full;
+
 	if (check_death(philo))
 		return ;
 	take_or_leave_fork(philo, 1);
@@ -65,7 +67,14 @@ static void	end_phase(t_philo *philo)
 	pthread_mutex_lock(philo->meal_mutex);
 	philo->last_meal = get_current_time();
 	philo->times_eaten++;
+	full = (philo->conf->times_must_eat > 0
+			&& philo->times_eaten >= philo->conf->times_must_eat);
 	pthread_mutex_unlock(philo->meal_mutex);
+	if (full)
+	{
+		take_or_leave_fork(philo, 0);
+		return ;
+	}
 	ft_sleep(philo->conf->time_to_eat);
 	take_or_leave_fork(philo, 0);
 	if (check_death(philo))
@@ -76,15 +85,25 @@ static void	end_phase(t_philo *philo)
 
 void	*looper(t_philo *philo)
 {
+	int	full;
+
 	while (1)
 	{
 		if (check_death(philo))
 			return (NULL);
 		ft_print_think(philo);
-		ft_sleep(1);
+		ft_sleep(philo->conf->time_to_eat / 2);
 		if (check_death(philo))
 			return (NULL);
 		end_phase(philo);
+		pthread_mutex_lock(philo->meal_mutex);
+		full = (philo->conf->times_must_eat > 0
+				&& philo->times_eaten >= philo->conf->times_must_eat);
+		pthread_mutex_unlock(philo->meal_mutex);
+		if (full)
+		{
+			return (NULL);
+		}
 	}
 }
 
@@ -105,7 +124,6 @@ void	*philo_routine(void *arg)
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		ft_sleep(philo->conf->time_to_eat / 2);
+		ft_sleep(philo->conf->time_to_eat);
 	return (looper(philo));
-	return (NULL);
 }

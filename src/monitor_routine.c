@@ -53,10 +53,12 @@ void	*monitor_routine(void *arg)
 			current_time = get_current_time();
 			if (current_time - conf->philos[i].last_meal > conf->time_to_die)
 			{
+				pthread_mutex_lock(&conf->death_mutex);
+				conf->died = 1;
+				pthread_mutex_unlock(&conf->death_mutex);
 				pthread_mutex_unlock(conf->philos[i].meal_mutex);
 				ft_print_die(&conf->philos[i]);
-				(pthread_mutex_lock(&conf->death_mutex), conf->died = 1);
-				return (pthread_mutex_unlock(&conf->death_mutex), NULL);
+				return (NULL);
 			}
 			pthread_mutex_unlock(conf->philos[i].meal_mutex);
 		}

@@ -57,6 +57,7 @@ static void	init_death(t_config *conf)
 	while (++i < conf->num_philos)
 		pthread_mutex_init(&conf->meal_mutexes[i], NULL);
 	pthread_mutex_init(&conf->death_mutex, NULL);
+	pthread_mutex_init(&conf->print_mutex, NULL);
 }
 
 void	ft_destroy(t_config conf)
@@ -67,10 +68,12 @@ void	ft_destroy(t_config conf)
 	while (++i < conf.num_philos)
 		pthread_mutex_destroy(&conf.meal_mutexes[i]);
 	pthread_mutex_destroy(&conf.death_mutex);
+	pthread_mutex_destroy(&conf.print_mutex);
 	free(conf.forks);
 	free(conf.threads);
 	free(conf.philos);
 	free(conf.meal_mutexes);
+	;
 }
 
 int	main(int argc, char **argv)
