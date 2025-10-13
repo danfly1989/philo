@@ -26,7 +26,7 @@ static void	take_or_leave_fork(t_philo *philo, int on)
 {
 	if (on)
 	{
-		if (philo->id == philo->conf->num_philos)
+		if (philo->id % 2 == 0)
 			(pthread_mutex_lock(philo->right_fork),
 				pthread_mutex_lock(philo->left_fork));
 		else
@@ -35,7 +35,7 @@ static void	take_or_leave_fork(t_philo *philo, int on)
 	}
 	else
 	{
-		if (philo->id == philo->conf->num_philos)
+		if (philo->id % 2 == 0)
 			(pthread_mutex_unlock(philo->right_fork),
 				pthread_mutex_unlock(philo->left_fork));
 		else
@@ -67,6 +67,7 @@ static void	end_phase(t_philo *philo)
 	pthread_mutex_lock(philo->meal_mutex);
 	philo->last_meal = get_current_time();
 	philo->times_eaten++;
+	ft_sleep(philo->time_to_eat);
 	full = (philo->conf->times_must_eat > 0
 			&& philo->times_eaten >= philo->conf->times_must_eat);
 	pthread_mutex_unlock(philo->meal_mutex);
@@ -92,7 +93,7 @@ void	*looper(t_philo *philo)
 		if (check_death(philo))
 			return (NULL);
 		ft_print_think(philo);
-		ft_sleep(philo->conf->time_to_eat / 2);
+		// ft_sleep(philo->conf->time_to_eat / 2);
 		if (check_death(philo))
 			return (NULL);
 		end_phase(philo);
@@ -124,6 +125,6 @@ void	*philo_routine(void *arg)
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		ft_sleep(philo->conf->time_to_eat);
+		ft_sleep(philo->conf->time_to_eat / 2);
 	return (looper(philo));
 }

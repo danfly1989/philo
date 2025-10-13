@@ -30,10 +30,10 @@ int	ft_atoi_positive(char *str)
 
 	result = 0;
 	i = 0;
-	if (str[0] == '-')
-		return (-1);
 	while (str[i] == '+' || str[i] == ' ' || str[i] == '\t')
 		i++;
+	if (str[i] == '-')
+		return (-1);
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		result = (result * 10) + (str[i] - '0');

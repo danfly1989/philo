@@ -12,14 +12,21 @@
 
 #include "philo.h"
 
-void	ft_init_conf(t_config *conf, int argc, char **argv)
+int	ft_init_conf(t_config *conf, int argc, char **argv)
 {
 	conf->num_philos = ft_atoi_positive(argv[1]);
 	conf->time_to_die = ft_atoi_positive(argv[2]);
 	conf->time_to_eat = ft_atoi_positive(argv[3]);
 	conf->time_to_sleep = ft_atoi_positive(argv[4]);
+	if (conf->num_philos == -1 || conf->time_to_die == -1
+		|| conf->time_to_eat == -1 || conf->time_to_sleep == -1)
+		return (-1);
 	if (argc == 6)
+	{
 		conf->times_must_eat = ft_atoi_positive(argv[5]);
+		if (conf->times_must_eat == -1)
+			return (-1);
+	}
 	else
 		conf->times_must_eat = -1;
 	conf->died = 0;
@@ -27,20 +34,17 @@ void	ft_init_conf(t_config *conf, int argc, char **argv)
 	conf->forks = malloc(sizeof(pthread_mutex_t) * conf->num_philos);
 	conf->threads = malloc(sizeof(pthread_t) * conf->num_philos);
 	conf->meal_mutexes = malloc(sizeof(pthread_mutex_t) * conf->num_philos);
+	return (0);
 }
 
 void	ft_init_philos(t_config *conf)
 {
-	int		i;
-	long	start_time;
+	int	i;
 
 	i = 0;
-	start_time = get_current_time();
 	while (i < conf->num_philos)
 	{
-		conf->philos[i].id = i + 1;
-		conf->philos[i].start_time = start_time;
-		conf->philos[i].last_meal = start_time;
+		conf->philos[i].id = i + 1; // conf->philos[i].last_meal = start_time;
 		conf->philos[i].left_fork = &conf->forks[i];
 		conf->philos[i].right_fork = &conf->forks[(i + 1) % conf->num_philos];
 		conf->philos[i].conf = conf;
@@ -84,11 +88,19 @@ int	main(int argc, char **argv)
 	i = -1;
 	if (argc < 5 || argc > 6)
 		return (printf("WRONG: Invalid number of arguments entered"), 1);
-	ft_init_conf(&conf, argc, argv);
+	if (ft_init_conf(&conf, argc, argv) == -1)
+		return (printf("WRONG: Invalid number of arguments entered"), 1);
 	while (++i < conf.num_philos)
 		pthread_mutex_init(&conf.forks[i], NULL);
 	init_death(&conf);
 	ft_init_philos(&conf);
+	conf.start_time = get_current_time();
+	i = -1;
+	while (++i < conf.num_philos)
+	{
+		conf.philos[i].start_time = conf.start_time;
+		conf.philos[i].last_meal = conf.start_time;
+	}
 	i = -1;
 	while (++i < conf.num_philos)
 		pthread_create(&conf.threads[i], NULL, philo_routine, &conf.philos[i]);
