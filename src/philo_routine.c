@@ -59,10 +59,7 @@ static void	end_phase(t_philo *philo)
 		return ;
 	take_or_leave_fork(philo, 1);
 	if (check_death(philo))
-	{
-		take_or_leave_fork(philo, 0);
-		return ;
-	}
+		return (take_or_leave_fork(philo, 0), (void)0);
 	(ft_print_fork(philo), ft_print_fork(philo), ft_print_eat(philo));
 	pthread_mutex_lock(philo->meal_mutex);
 	philo->last_meal = get_current_time();
@@ -72,10 +69,7 @@ static void	end_phase(t_philo *philo)
 			&& philo->times_eaten >= philo->conf->times_must_eat);
 	pthread_mutex_unlock(philo->meal_mutex);
 	if (full)
-	{
-		take_or_leave_fork(philo, 0);
-		return ;
-	}
+		return (take_or_leave_fork(philo, 0), (void)0);
 	ft_sleep(philo->conf->time_to_eat);
 	take_or_leave_fork(philo, 0);
 	if (check_death(philo))
@@ -93,7 +87,6 @@ void	*looper(t_philo *philo)
 		if (check_death(philo))
 			return (NULL);
 		ft_print_think(philo);
-		// ft_sleep(philo->conf->time_to_eat / 2);
 		if (check_death(philo))
 			return (NULL);
 		end_phase(philo);

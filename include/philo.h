@@ -41,7 +41,7 @@ typedef struct s_config
 	int				time_to_sleep;
 	int				times_must_eat;
 	int				died;
-	long start_time; // ← Add this
+	long			start_time;
 	pthread_mutex_t	death_mutex;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	*meal_mutexes;
@@ -64,5 +64,6 @@ void				ft_print_eat(t_philo *philo);
 void				ft_print_sleep(t_philo *philo);
 void				ft_print_fork(t_philo *philo);
 void				ft_print_die(t_philo *philo);
+void				ft_destroy(t_config conf);
 
 #endif

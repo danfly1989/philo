@@ -32,6 +32,24 @@ static int	all_philos_satisfied(t_config *conf)
 	return (satisfied_count == conf->num_philos);
 }
 
+static int	helper(t_config *conf, int i)
+{
+	long	current_time;
+
+	current_time = get_current_time();
+	if (current_time - conf->philos[i].last_meal > conf->time_to_die)
+	{
+		pthread_mutex_lock(&conf->death_mutex);
+		conf->died = 1;
+		pthread_mutex_unlock(&conf->death_mutex);
+		pthread_mutex_unlock(conf->philos[i].meal_mutex);
+		ft_print_die(&conf->philos[i]);
+		return (1);
+	}
+	pthread_mutex_unlock(conf->philos[i].meal_mutex);
+	return (0);
+}
+
 void	*monitor_routine(void *arg)
 {
 	t_config	*conf;
@@ -51,16 +69,8 @@ void	*monitor_routine(void *arg)
 		{
 			pthread_mutex_lock(conf->philos[i].meal_mutex);
 			current_time = get_current_time();
-			if (current_time - conf->philos[i].last_meal > conf->time_to_die)
-			{
-				pthread_mutex_lock(&conf->death_mutex);
-				conf->died = 1;
-				pthread_mutex_unlock(&conf->death_mutex);
-				pthread_mutex_unlock(conf->philos[i].meal_mutex);
-				ft_print_die(&conf->philos[i]);
+			if (helper(conf, i) == 1)
 				return (NULL);
-			}
-			pthread_mutex_unlock(conf->philos[i].meal_mutex);
 		}
 		ft_sleep(1);
 	}

@@ -44,7 +44,7 @@ void	ft_init_philos(t_config *conf)
 	i = 0;
 	while (i < conf->num_philos)
 	{
-		conf->philos[i].id = i + 1; // conf->philos[i].last_meal = start_time;
+		conf->philos[i].id = i + 1;
 		conf->philos[i].left_fork = &conf->forks[i];
 		conf->philos[i].right_fork = &conf->forks[(i + 1) % conf->num_philos];
 		conf->philos[i].conf = conf;
@@ -57,27 +57,37 @@ static void	init_death(t_config *conf)
 {
 	int	i;
 
-	i = -1;
-	while (++i < conf->num_philos)
+	i = 0;
+	while (i < conf->num_philos)
+	{
 		pthread_mutex_init(&conf->meal_mutexes[i], NULL);
+		i++;
+	}
 	pthread_mutex_init(&conf->death_mutex, NULL);
 	pthread_mutex_init(&conf->print_mutex, NULL);
 }
 
-void	ft_destroy(t_config conf)
+static int	init_all(t_config *conf, int argc, char **argv)
 {
 	int	i;
 
 	i = -1;
-	while (++i < conf.num_philos)
-		pthread_mutex_destroy(&conf.meal_mutexes[i]);
-	pthread_mutex_destroy(&conf.death_mutex);
-	pthread_mutex_destroy(&conf.print_mutex);
-	free(conf.forks);
-	free(conf.threads);
-	free(conf.philos);
-	free(conf.meal_mutexes);
-	;
+	if (argc < 5 || argc > 6)
+		return (printf("WRONG: Invalid number of arguments entered"), 1);
+	if (ft_init_conf(conf, argc, argv) == -1)
+		return (printf("WRONG: Invalid number of arguments entered"), 1);
+	while (++i < conf->num_philos)
+		pthread_mutex_init(&conf->forks[i], NULL);
+	init_death(conf);
+	ft_init_philos(conf);
+	conf->start_time = get_current_time();
+	i = -1;
+	while (++i < conf->num_philos)
+	{
+		conf->philos[i].start_time = conf->start_time;
+		conf->philos[i].last_meal = conf->start_time;
+	}
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -85,22 +95,8 @@ int	main(int argc, char **argv)
 	t_config	conf;
 	int			i;
 
-	i = -1;
-	if (argc < 5 || argc > 6)
-		return (printf("WRONG: Invalid number of arguments entered"), 1);
-	if (ft_init_conf(&conf, argc, argv) == -1)
-		return (printf("WRONG: Invalid number of arguments entered"), 1);
-	while (++i < conf.num_philos)
-		pthread_mutex_init(&conf.forks[i], NULL);
-	init_death(&conf);
-	ft_init_philos(&conf);
-	conf.start_time = get_current_time();
-	i = -1;
-	while (++i < conf.num_philos)
-	{
-		conf.philos[i].start_time = conf.start_time;
-		conf.philos[i].last_meal = conf.start_time;
-	}
+	if (init_all(&conf, argc, argv))
+		return (1);
 	i = -1;
 	while (++i < conf.num_philos)
 		pthread_create(&conf.threads[i], NULL, philo_routine, &conf.philos[i]);
