@@ -70,7 +70,7 @@ static void	end_phase(t_philo *philo)
 	pthread_mutex_unlock(philo->meal_mutex);
 	if (full)
 		return (take_or_leave_fork(philo, 0), (void)0);
-	ft_sleep(philo->conf->time_to_eat);
+	// ft_sleep(philo->conf->time_to_sleep);
 	take_or_leave_fork(philo, 0);
 	if (check_death(philo))
 		return ;
