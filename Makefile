@@ -1,4 +1,4 @@
-CFLAGS = -Wall -Wextra -Werror -I./include
+CFLAGS = -g -O0 -Wall -Wextra -Werror -I./include
 SRC = src/philo.c src/utils.c src/sleep.c src/philo_routine.c src/monitor_routine.c src/ft_print.c
 OBJ = $(SRC:.c=.o)
 NAME = philo

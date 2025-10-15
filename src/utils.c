@@ -45,17 +45,17 @@ int	ft_atoi_positive(char *str)
 		return (result);
 }
 
-void	ft_destroy(t_config conf)
+void	ft_destroy(t_config *conf)
 {
 	int	i;
 
 	i = -1;
-	while (++i < conf.num_philos)
-		pthread_mutex_destroy(&conf.meal_mutexes[i]);
-	pthread_mutex_destroy(&conf.death_mutex);
-	pthread_mutex_destroy(&conf.print_mutex);
-	free(conf.forks);
-	free(conf.threads);
-	free(conf.philos);
-	free(conf.meal_mutexes);
+	while (++i < conf->num_philos)
+		pthread_mutex_destroy(&conf->meal_mutexes[i]);
+	pthread_mutex_destroy(&conf->death_mutex);
+	pthread_mutex_destroy(&conf->print_mutex);
+	free(conf->forks);
+	free(conf->threads);
+	free(conf->philos);
+	free(conf->meal_mutexes);
 }

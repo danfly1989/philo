@@ -64,6 +64,5 @@ void				ft_print_eat(t_philo *philo);
 void				ft_print_sleep(t_philo *philo);
 void				ft_print_fork(t_philo *philo);
 void				ft_print_die(t_philo *philo);
-void				ft_destroy(t_config conf);
-
+void				ft_destroy(t_config *conf);
 #endif

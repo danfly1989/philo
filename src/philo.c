@@ -12,14 +12,19 @@
 
 #include "philo.h"
 
+/*Initiate globally necessary variables
+Almost everything here started as something declared in main
+and the struct basically exists for Norminette appeasement*/
 int	ft_init_conf(t_config *conf, int argc, char **argv)
 {
 	conf->num_philos = ft_atoi_positive(argv[1]);
 	conf->time_to_die = ft_atoi_positive(argv[2]);
 	conf->time_to_eat = ft_atoi_positive(argv[3]);
 	conf->time_to_sleep = ft_atoi_positive(argv[4]);
-	if (conf->num_philos == -1 || conf->time_to_die == -1
-		|| conf->time_to_eat == -1 || conf->time_to_sleep == -1)
+	if (!conf->num_philos || !conf->time_to_die || !conf->time_to_eat
+		|| !conf->time_to_sleep || conf->num_philos == -1
+		|| conf->time_to_die == -1 || conf->time_to_eat == -1
+		|| conf->time_to_sleep == -1)
 		return (-1);
 	if (argc == 6)
 	{
@@ -34,9 +39,12 @@ int	ft_init_conf(t_config *conf, int argc, char **argv)
 	conf->forks = malloc(sizeof(pthread_mutex_t) * conf->num_philos);
 	conf->threads = malloc(sizeof(pthread_t) * conf->num_philos);
 	conf->meal_mutexes = malloc(sizeof(pthread_mutex_t) * conf->num_philos);
+	if (!conf->philos || !conf->forks || !conf->threads || !conf->meal_mutexes)
+		return (-1);
 	return (0);
 }
 
+/*Initiate each philosopher with necessary attributes*/
 void	ft_init_philos(t_config *conf)
 {
 	int	i;
@@ -53,6 +61,8 @@ void	ft_init_philos(t_config *conf)
 	}
 }
 
+/*Initiate mutexed needed for death tracking
+but also the print mutex used elsewhere*/
 static void	init_death(t_config *conf)
 {
 	int	i;
@@ -67,6 +77,12 @@ static void	init_death(t_config *conf)
 	pthread_mutex_init(&conf->print_mutex, NULL);
 }
 
+/*Check argument validity and return error (1) if anythign is wrong
+Initiate configuration struct for universal varialbes
+Initiate mutex lock for each fork
+initiate death associated mutexes
+Initiate philos using universal variables from conf
+set common start time and apply to each philo*/
 static int	init_all(t_config *conf, int argc, char **argv)
 {
 	int	i;
@@ -90,6 +106,12 @@ static int	init_all(t_config *conf, int argc, char **argv)
 	return (0);
 }
 
+/*Initiate global configuration and philosopher attritbutes
+Create threads per philosopher with philo_routine
+Create monitor thread with monitor_routine
+Join all threads
+Destroy all mutexes and free all allocated memory*/
+
 int	main(int argc, char **argv)
 {
 	t_config	conf;
@@ -105,9 +127,6 @@ int	main(int argc, char **argv)
 	while (++i < conf.num_philos)
 		pthread_join(conf.threads[i], NULL);
 	pthread_join(conf.monitor_thread, NULL);
-	i = -1;
-	while (++i < conf.num_philos)
-		pthread_mutex_destroy(&conf.forks[i]);
-	ft_destroy(conf);
+	ft_destroy(&conf);
 	return (0);
 }
