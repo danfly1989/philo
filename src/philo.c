@@ -92,9 +92,10 @@ static int	init_all(t_config *conf, int argc, char **argv)
 
 	i = -1;
 	if (argc < 5 || argc > 6)
-		return (printf("WRONG: Invalid number of arguments entered"), 1);
+		return (printf("Invalid arg number: num, die, eat, sleep, (max)\n"), 1);
 	if (ft_init_conf(conf, argc, argv) == -1)
-		return (printf("WRONG: Invalid number of arguments entered"), 1);
+		return (printf("Positive integers only: num, die, eat, sleep, (max)\n"),
+			1);
 	while (++i < conf->num_philos)
 		pthread_mutex_init(&conf->forks[i], NULL);
 	init_death(conf);

@@ -17,7 +17,8 @@ to given philosopher start time and prints the input message
 at approptiate timestamp. This is virtually always called by
 one of the print functions in ft_print.c, which will define the
 appropriate message; think, eat etc. It ensures each of these
-basic print functions is adequalely mutexed*/
+basic print functions is adequalely mutexed. Death is done differently
+as it must always print*/
 void	ft_print(t_philo *philo, char *message)
 {
 	long	timestamp;

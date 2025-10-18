@@ -32,7 +32,11 @@ void	ft_print_fork(t_philo *philo)
 	ft_print(philo, "has taken a fork");
 }
 
-
+/*This is the one print here containing a mutex lock
+of its own because it is ALWAYS called directly rather
+than through the standard ft_print. The core complication
+is that death must always print and ft_print is designed
+to preven printing after death flag is triggered*/
 void	ft_print_die(t_philo *philo)
 {
 	long	timestamp;
