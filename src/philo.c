@@ -44,7 +44,9 @@ int	ft_init_conf(t_config *conf, int argc, char **argv)
 	return (0);
 }
 
-/*Initiate each philosopher with necessary attributes*/
+/*Initiate each philosopher with necessary attributes
+Uses modulo to ensure right fork rotates back around again
+Last right fork is left fork 1*/
 void	ft_init_philos(t_config *conf)
 {
 	int	i;
@@ -62,7 +64,8 @@ void	ft_init_philos(t_config *conf)
 }
 
 /*Initiate mutexed needed for death tracking
-but also the print mutex used elsewhere*/
+but also the print mutex used elsewhere
+This was added later for convenience*/
 static void	init_death(t_config *conf)
 {
 	int	i;

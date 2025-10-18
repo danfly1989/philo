@@ -12,6 +12,12 @@
 
 #include "philo.h"
 
+/*A general print function that keeps track of time relative
+to given philosopher start time and prints the input message
+at approptiate timestamp. This is virtually always called by
+one of the print functions in ft_print.c, which will define the
+appropriate message; think, eat etc. It ensures each of these
+basic print functions is adequalely mutexed*/
 void	ft_print(t_philo *philo, char *message)
 {
 	long	timestamp;
@@ -23,6 +29,9 @@ void	ft_print(t_philo *philo, char *message)
 	pthread_mutex_unlock(&philo->conf->print_mutex);
 }
 
+/*Atoi function designed to ensure only valid (positive input)
+and return -1 when invalid, or return the actual converted number
+on success*/
 int	ft_atoi_positive(char *str)
 {
 	int	result;
@@ -45,6 +54,9 @@ int	ft_atoi_positive(char *str)
 		return (result);
 }
 
+/*Destroy all mutex locks and free
+all global conf variables that were
+malloced at the start*/
 void	ft_destroy(t_config *conf)
 {
 	int	i;

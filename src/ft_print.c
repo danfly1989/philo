@@ -32,6 +32,7 @@ void	ft_print_fork(t_philo *philo)
 	ft_print(philo, "has taken a fork");
 }
 
+
 void	ft_print_die(t_philo *philo)
 {
 	long	timestamp;

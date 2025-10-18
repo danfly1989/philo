@@ -12,6 +12,10 @@
 
 #include "philo.h"
 
+/*If times_must_eat (5th arg) was actually set, this
+will checkc if all philos are satisfied. Returns 1 if
+this is the case. 0 in all other cases (allowing monitor
+to continue)*/
 static int	all_philos_satisfied(t_config *conf)
 {
 	int	satisfied_count;
@@ -32,11 +36,19 @@ static int	all_philos_satisfied(t_config *conf)
 	return (satisfied_count == conf->num_philos);
 }
 
+/*Cut from the original monitor
+This is where the crux of what monitor calculates happens
+Time since last meal being greater than time to die
+This is a death case and will set the died flag*/
 static int	helper(t_config *conf, int i)
 {
 	long	current_time;
+	int		times_eaten;
 
+	times_eaten = conf->philos[i].times_eaten;
 	current_time = get_current_time();
+	if (conf->times_must_eat > 0 && times_eaten >= conf->times_must_eat)
+		return (pthread_mutex_unlock(conf->philos[i].meal_mutex), 0);
 	if (current_time - conf->philos[i].last_meal > conf->time_to_die)
 	{
 		pthread_mutex_lock(&conf->death_mutex);
@@ -50,11 +62,15 @@ static int	helper(t_config *conf, int i)
 	return (0);
 }
 
+/*Check all philos satisfied (relevant where times_must_eat exists only).
+ In the case where they are, diedflag will be set to 1 to end program
+ rather than indicate a literal death case. Not satisfied or unlimited -1
+ case simply moves onto helper where the original meat of monitor
+ function takes place */
 void	*monitor_routine(void *arg)
 {
 	t_config	*conf;
 	int			i;
-	long		current_time;
 
 	conf = (t_config *)arg;
 	while (1)
@@ -68,11 +84,10 @@ void	*monitor_routine(void *arg)
 		while (++i < conf->num_philos)
 		{
 			pthread_mutex_lock(conf->philos[i].meal_mutex);
-			current_time = get_current_time();
 			if (helper(conf, i) == 1)
 				return (NULL);
 		}
-		ft_sleep(1);
+		usleep(100);
 	}
 	return (NULL);
 }
