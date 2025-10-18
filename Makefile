@@ -1,12 +1,13 @@
-CFLAGS = -g -O0 -Wall -Wextra -Werror -I./include
+NAME = philo
+CC = cc
+CFLAGS = -g -O0 -Wall -Wextra -Werror -pthread -I./include
 SRC = src/philo.c src/utils.c src/sleep.c src/philo_routine.c src/monitor_routine.c src/ft_print.c
 OBJ = $(SRC:.c=.o)
-NAME = philo
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	 cc $(CFLAGS) $^ -o $@ -lpthread
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
 
 clean:
 	rm -f $(OBJ)
